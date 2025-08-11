@@ -10,8 +10,9 @@ public class program {
 	
 	//Inimigos
 	Inimigo goblin = new Goblin("Bobe");
-	
-	
+
+    Inimigo[] inimigos = {goblin};
+
 	
     System.out.println("Digite o nome do jogador");
     Jogador jogador = new Jogador(scanner.nextLine()); 
@@ -26,8 +27,9 @@ public class program {
             System.out.println("2. Ver inventario");
             System.out.println("3. Tomar dano");
             System.out.println("4. Adicionar item");
-            System.out.println("5. Sair");
-            System.out.print("\nEscolha uma opcao: ");
+            System.out.println("5. Buscar...");
+            System.out.println("0. Sair");
+            System.out.print("\n> ");
             
             while (!scanner.hasNextInt()) {
                 System.out.print("Digite um número valido: ");
@@ -60,7 +62,7 @@ public class program {
                     break;
 
                 case 5:
-                    System.out.print("Você encontou um" + goblin.get)
+                    Combate combate = new Combate(jogador, goblin);
                     break;
 				
 				case 0:
@@ -71,7 +73,7 @@ public class program {
                     System.out.println("Opcao invalida!");
             }
 
-        } while (opcao != 5 && jogador.isAlive());
+        } while (opcao != 0 && jogador.isAlive());
 
         if (!jogador.isAlive()) {
             System.out.println("Fim de jogo: o jogador morreu.");
