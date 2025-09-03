@@ -1,0 +1,14 @@
+C:\Users\LEANARDO\Desktop\java\game\src\jogo\program.java
+C:\Users\LEANARDO\Desktop\java\game\src\jogo\armas\AdagaGoblin.java
+C:\Users\LEANARDO\Desktop\java\game\src\jogo\armas\Arma.java
+C:\Users\LEANARDO\Desktop\java\game\src\jogo\armas\Excalibur.java
+C:\Users\LEANARDO\Desktop\java\game\src\jogo\enums\Raridade.java
+C:\Users\LEANARDO\Desktop\java\game\src\jogo\inimigos\Goblin.java
+C:\Users\LEANARDO\Desktop\java\game\src\jogo\inimigos\Inimigo.java
+C:\Users\LEANARDO\Desktop\java\game\src\jogo\inimigos\Orc.java
+C:\Users\LEANARDO\Desktop\java\game\src\jogo\itens\Item.java
+C:\Users\LEANARDO\Desktop\java\game\src\jogo\itens\ItemDecorativo.java
+C:\Users\LEANARDO\Desktop\java\game\src\jogo\itens\ItemUsavel.java
+C:\Users\LEANARDO\Desktop\java\game\src\jogo\jogador\Jogador.java
+C:\Users\LEANARDO\Desktop\java\game\src\jogo\logica\Combate.java
+C:\Users\LEANARDO\Desktop\java\game\src\jogo\utils\Sorteador.java
