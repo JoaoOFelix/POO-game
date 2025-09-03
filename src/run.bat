@@ -1,0 +1,26 @@
+﻿@echo off
+REM Apaga classes antigas
+del /S /Q jogo\*.class
+
+REM Gera lista de todos os arquivos .java
+dir /S /B *.java > sources.txt
+
+REM Compila todos os arquivos
+javac @sources.txt
+if errorlevel 1 (
+    echo.
+    echo ========================
+    echo !!! Erro na compilacao !!!
+    echo ========================
+    pause
+    exit /b
+)
+
+REM Executa a classe principal
+echo.
+echo ========================
+echo Iniciando o Jogo...
+echo ========================
+java jogo.Program
+
+pause
