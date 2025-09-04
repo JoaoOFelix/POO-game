@@ -7,10 +7,10 @@ public class Goblin extends Inimigo{
 			nome,      //nome
 			"Goblin",  //raca
 			30,        //vida
-			10,        //dano
+			3,        //dano
 			0,		   //defesa
 			3,		   //velocidade
-			5          //drop de experiencia
+			25          //drop de experiencia
 			);
 		
 		this.setArma(new AdagaGoblin());
@@ -30,9 +30,14 @@ public class Goblin extends Inimigo{
 		}
 	}
 
+	@Override
+	public void usar(){
+		//--
+	}
+
 
     @Override
-    public void morrer(Jogador jogador) {
+    public void aoMorrer(Jogador jogador) {
         System.out.println(getNome() + " grita: 'Aaargh!' e cai morto. Você ganha " + this.getDropXp() + " XP.");
         jogador.ganharXp(this.getDropXp());
 		
@@ -51,7 +56,7 @@ public class Goblin extends Inimigo{
     public void enemyAi(Jogador jogador) {
 
         //tem 35% de chanche de tentar fugir caso tenha menos de 40% de vidae caso não tenha tentado fugir
-        if(getVida() <= (vidaMax * 0.35) && Sorteador.chance(25) && tentativasFuga == 0){
+        if(getVida() <= (vidaMax * 0.35) && Sorteador.chance(25) && tentativasFuga == 0 && this.vida > 4){
 
                 System.out.println(getNome() + " Tentou fugir...");
 
@@ -76,11 +81,11 @@ public class Goblin extends Inimigo{
 
             ataqueEspecial(jogador);
 
-        } else if (Sorteador.chance(85)){
+        } else if (Sorteador.chance(92)){
 
             atacar(jogador);
 
-        } else if(Sorteador.chance(8)){
+        } else{
 
             System.out.println("Goblin errou o ataque!");
         }

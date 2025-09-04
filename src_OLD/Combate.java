@@ -26,7 +26,7 @@ public class Combate {
 	private void criarInimigos(){
 		//SorteadorNomes sorteador = new SorteadorNomes();
 		
-		if(Sorteador.chance(10)){
+		if(Sorteador.chance(18)){
 			this.inimigo = new Orc(sortearOrc());
 		} else {
 			this.inimigo = new Goblin(sortearGoblin());
@@ -38,7 +38,7 @@ public class Combate {
 	
 
     public void playerTurn() {
-        jogador.atacar(inimigo);
+        jogador.atacar(inimigo, jogador);
 
         System.out.println("Vida do inimigo: "  + inimigo.getVida() + "/" + inimigo.getVidaMax() + "\n");
 
@@ -112,7 +112,7 @@ public class Combate {
 
                 case 2:
                     System.out.println("Inventario:");
-                    System.out.println(jogador.getInventario());
+                    System.out.println(jogador.inventario.getInventario());
 
 
                     break;

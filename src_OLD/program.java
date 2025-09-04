@@ -94,6 +94,12 @@ public class program {
 		case 6:
 			this.equiparArma();
 			break;
+		case 7:
+			this.usarCura();
+			break;
+		case 8:
+			this.usarItem();
+			break;
 		case 0:
 			System.out.println("Saindo do jogo...");
 			break;
@@ -104,10 +110,22 @@ public class program {
     }
 	
 	
+	//APAGAR 
+	private void usarCura(){
+		jogador.addItem(new PocaoCuraPequena());
+		jogador.addItem(new PocaoCuraMedia());
+		jogador.addItem(new PocaoCuraGrande());
+		
+		
+	}
+	
+	
+	
+	
 	
 	private void verInventario() {
         System.out.println("Inventário:");
-        System.out.println(jogador.verInventario());
+        System.out.println(jogador.inventario.verInventario());
     }
 
     private void tomarDano() {
@@ -142,6 +160,36 @@ public class program {
     }
 	
 	
+	//colocar no jogador =====================================================================================
+	private void usarItem(){
+		verInventario();
+
+		System.out.print("Escolha uma item para usar (número): ");
+		Scanner sc = new Scanner(System.in);
+		int escolha = sc.nextInt();
+
+		if (escolha < 0 || escolha >= jogador.inventario.getInventario().size()) {
+			System.out.println("Opção inválida!");
+			return;
+		}
+
+		Item itemEscolhido = jogador.inventario.getInventario().get(escolha);
+		
+		if (itemEscolhido instanceof ItemUsavel) {
+			
+			
+			((ItemUsavel) itemEscolhido).usar(jogador);
+			
+			
+			jogador.inventario.remover((ItemUsavel) itemEscolhido);
+			
+			
+		} else {
+			System.out.println("O item selecionado não é usável!");
+		}
+	}
+	
+	
 	
 	private void equiparArma() {
 		verInventario();
@@ -150,12 +198,12 @@ public class program {
 		Scanner sc = new Scanner(System.in);
 		int escolha = sc.nextInt();
 
-		if (escolha < 0 || escolha >= jogador.getInventario().size()) {
+		if (escolha < 0 || escolha >= jogador.inventario.getInventario().size()) {
 			System.out.println("Opção inválida!");
 			return;
 		}
 
-		Item itemEscolhido = jogador.getInventario().get(escolha);
+		Item itemEscolhido = jogador.inventario.getInventario().get(escolha);
 
 		if (itemEscolhido instanceof Arma) {
 			jogador.equiparArma((Arma) itemEscolhido);

@@ -1,38 +1,41 @@
 import java.util.List;
 import java.util.ArrayList;
 
-public class Jogador{        
-        private String nome;
-        private double vidaMax = 100;
-        private double vida;
-        private double dano;
+public class Jogador extends Entidade{
 		private int xp;
         private int xpLevel;
 		private Arma armaEquipada = null;
-        protected List<Item> inventario = new ArrayList<>();
+        //protected List<Item> inventario = new ArrayList<>();
 		
+		//TORNAR PIRVATE E ADICIONAR OS GETTERS E OS SETTERS
+		public Inventario inventario = new Inventario();
 
         
         public Jogador(String nome){
-            this.nome = nome;
-            this.vida = vidaMax;
-			this.dano = 5;
-			this.xp = 0;
+			super(
+				nome,	//nome
+				100,	//vidaMax
+				100,	//vida
+				5,		//dano
+				0		//defesa
+			);
+			
+			xp = 0;
+			xpLevel = 0;
         }
 		
 		public Jogador(String nome, double vida, double dano){
-			this.nome = nome;;
-			this.vida = this.vidaMax = vida;
-			this.dano = dano;
+			super(
+				nome,	//nome
+				vida,	//vidaMax
+				vida,	//vida
+				dano,	//dano
+				0		//defesa
+			);
+			
+			xp = 0;
+			xpLevel = 0;
 		}
-        
-        public String getNome(){
-            return nome;
-        }
-        
-        public double getVida(){
-            return vida;
-        }
 		
 	
 		public double getDanoBruto(){
@@ -42,6 +45,7 @@ public class Jogador{
 		
 		//REFAZER DEPOIS!!!!!!!!!!!!!!!!!!!!!!!!!!
 		//classe arma deverá calcular o critico! não o player
+		@Override
         public double getDano(){ 
 			if(armaEquipada != null){
 				if(Sorteador.chance(armaEquipada.chanceCritico)){
@@ -57,12 +61,6 @@ public class Jogador{
 			
 		}
 		
-		
-		
-		public double getVidaMax(){
-            return vidaMax;
-        }
-		
 		public double getXp(){
 			return xp;
 		}
@@ -75,49 +73,17 @@ public class Jogador{
 			return armaEquipada;
 		}
         
-        public List<Item> getInventario(){
-			return inventario; // retorna a lista real de itens
-		}
-		
-		
-		public String verInventario(){
-			if (inventario.isEmpty()) {
-				return "Nenhum item no inventário.";
-			}
-
-			StringBuilder sb = new StringBuilder();
-			for (int i = 0; i < inventario.size(); i++) {
-				Item item = inventario.get(i);
-    
-				sb.append(i).append(" - ")
-				.append(item.getNome())
-				.append(" | Raridade: ").append(item.getRaridade())
-				.append(" | Descrição: ").append(item.getDescricao());
-    
-				// Se for arma, mostrar dano também
-				if (item instanceof Arma) {
-					Arma arma = (Arma) item;
-					sb.append(" | Dano: ").append(arma.getDano())
-					.append(" | Velocidade: ").append(arma.getVelocidade())
-					.append(" | Chance de critico: ").append(arma.getChanceCritico())
-					.append(" | Multiplicador de dano critico: ").append(arma.getMultiplicadorCritico());
-				}
-    
-				sb.append("\n");
-			}
-			
-			return sb.toString();
-		}
-        
 		//-------------------------------------ACOES-------------------------------------------------------
         
+		
+		//MUDAR PARA tomarDano() e colocar override
         public void dmgPlayer(double dmg){
             vida -= dmg;
             System.out.println("Jogador perdeu " + dmg + " pontos de vida!");
 			System.out.println("Vida: " + getVida() + "/" + getVidaMax());
 
             if(!isAlive()){
-                playerDeath();
+                aoMorrer(this);
             }
         }
 		
@@ -130,19 +96,6 @@ public class Jogador{
 			this.armaEquipada = null;
 			System.out.println(nome + " deseequipou sua arma.");
 		}
-
-        public void atacar(Inimigo inimigo){
-			double danoTotal = getDano();
-			
-			System.out.println(this.getNome() + " atacou " + inimigo.getNome() + " e causou " + danoTotal + " de dano\n");
-			
-			
-			
-            inimigo.tomarDano(danoTotal, this);
-        }
-		
-		
-		
 
         public void ganharXp(int xp){
             this.xp += xp;
@@ -164,14 +117,26 @@ public class Jogador{
 			addItem(new ItemDecorativo("Balão de festa", "Um balão de comemoração de um novo nível!", Raridade.COMUM));
 		}
 		
-        
+		public void usar(){
+			//---
+		}
+		
+		
+		//COLOCAR NA ENTIDADE
+		//===============================================================================================
+		public void usarItem(){
+			
+		}
+		
+		
         //Adicionar item
         public void addItem(Item item) {
-			inventario.add(item);
+			inventario.adicionarItem(item);
 			System.out.println(item.getNome() + " foi adicionado ao inventário.");
 		}
         
-        public void playerDeath(){
+		@Override
+        public void aoMorrer(Jogador jogador){
             System.out.println("Jogador morreu!");
         }
         
@@ -195,7 +160,7 @@ public class Jogador{
 				System.out.println("Dano crítico: " + (getDanoBruto() + armaEquipada.getCritico()));
             System.out.println("Experiência: " + getXp() + "/100");
             System.out.println("\n--Inventario--");
-            System.out.println(verInventario());
+            System.out.println(inventario.verInventario());
             System.out.println("===============================================");
         }
     

@@ -4,15 +4,30 @@ public class Orc extends Inimigo{
     private final Random random = new Random();
 
     public Orc(String nome) {
-        super(nome, "Orc", 50, 8, 2, 1, 18);
+        super(
+			nome,
+			"Orc",  //raca
+			50,     //vida
+			8,		//dano
+			2,		//defese
+			1,		//velocidade
+			38		// dropXP
+		);
+		
+		
 		this.setArma(new Excalibur());
     }
 
     @Override
-    public void morrer(Jogador jogador){
+    public void aoMorrer(Jogador jogador){
         System.out.println(getNome() + " grita: 'UUURAAAGHHH!' e cai morto. Você ganha " + getDropXp() + " XP.");
 		jogador.addItem(dropItem());
     }
+	
+	@Override
+	public void usar(){
+		//---
+	}
 
 
     @Override

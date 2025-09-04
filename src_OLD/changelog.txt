@@ -1,0 +1,14 @@
+04/09
+
+balanceamento
+dano adaga goblin 10 -> 5
+dano goblin 5 -> 3
+xp goblin 5 -> 25
+xp orc 15 -> 38
+
+
+
+
+codigo
+adiconado classe Entidade
+inimigo e jogador
