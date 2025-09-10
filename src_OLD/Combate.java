@@ -12,7 +12,7 @@ public class Combate {
 	private List<String> goblins;
     private List<String> orcs;
     private Random random = new Random();
-
+	
     public Combate(Jogador jogador){
 		this.jogador = jogador;
 		this.turno = 0;
@@ -24,9 +24,19 @@ public class Combate {
     }
 	
 	private void criarInimigos(){
+		int spawnChance = 18;
+		int goblinsDerrotados = Goblin.getGoblinsDerrotados();
 		//SorteadorNomes sorteador = new SorteadorNomes();
 		
-		if(Sorteador.chance(10)){
+		//calcura a chanhce de de encontrar orcs com base na quantidade de golbins derrotados
+		if(goblinsDerrotados > 0){
+			spawnChance *= goblinsDerrotados;
+		}
+		
+		//TESTE
+		System.out.println("TESTE SPAWN RATE__ %" + spawnChance);
+		
+		if(Sorteador.chance(spawnChance)){
 			this.inimigo = new Orc(sortearOrc());
 		} else {
 			this.inimigo = new Goblin(sortearGoblin());
@@ -38,7 +48,7 @@ public class Combate {
 	
 
     public void playerTurn() {
-        jogador.atacar(inimigo);
+        jogador.atacar(inimigo, jogador);
 
         System.out.println("Vida do inimigo: "  + inimigo.getVida() + "/" + inimigo.getVidaMax() + "\n");
 
@@ -88,6 +98,7 @@ public class Combate {
             System.out.println("1. Ver status");
             System.out.println("2. Ver inventario");
             System.out.println("3. Atacar " + inimigo.raca);
+			System.out.println("4. Usar poção de cura");
             System.out.println("0. Sair");
             System.out.print("\n>");
 
@@ -112,16 +123,18 @@ public class Combate {
 
                 case 2:
                     System.out.println("Inventario:");
-                    System.out.println(jogador.getInventario());
+                    System.out.println(jogador.inventario.getInventario());
 
 
                     break;
 
                 case 3:
                     playerTurn();
-
-
                     break;
+					
+				case 4:
+					jogador.usarCura();
+					break;
 
                 case 0:
                     System.out.println("Saindo da batalha...");

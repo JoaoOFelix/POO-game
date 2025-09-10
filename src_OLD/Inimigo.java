@@ -1,16 +1,20 @@
-public abstract class Inimigo {
-    protected String nome;
+public abstract class Inimigo extends Entidade{
     protected String raca;
-    protected double vida;
-    protected double vidaMax;
-    protected double dano;
-    protected double defesa;
     protected double velocidade;
     protected int dropXp;
 	protected Arma arma = null;
 
 
     public Inimigo(String nome, String raca, double vida, double dano, double defesa, double velocidade, int dropXp) {
+		super(
+			nome,		//nome
+			vida,	//vidamax
+			vida,		//vida
+			dano,		//dano
+			defesa		//defesa
+		);
+		
+		
         this.nome = nome;
         this.raca = raca;
         this.vida = this.vidaMax = vida;
@@ -64,15 +68,13 @@ public abstract class Inimigo {
 
     public abstract void enemyAi(Jogador jogador);
 	
-	public abstract Item dropItem();
-
-    public void morrer(Jogador jogador){
-        jogador.ganharXp(getDropXp());
-    }
+	public abstract void dropItem(Jogador jogador);
 
     public void atacar(Jogador jogador){
 		jogador.dmgPlayer(getDano());
 	} 
+	
+	
 
     public void tomarDano(double danoRecebido, Jogador jogador) {
 		double danoFinal = Math.max(0, danoRecebido - this.defesa);
@@ -81,7 +83,7 @@ public abstract class Inimigo {
 		System.out.println(this.nome + " tomou " + danoFinal + " de dano!");
 
 		if (this.vida <= 0)
-			morrer(jogador);
+			aoMorrer(jogador);
 	}
 
 

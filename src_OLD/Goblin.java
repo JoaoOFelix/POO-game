@@ -1,16 +1,17 @@
-public class Goblin extends Inimigo{
+public final class Goblin extends Inimigo{
 	private int tentativasFuga = 0;
+	protected static int goblinsDerrotados = 0;
 
 	public Goblin(String nome){
 		
 		super(
 			nome,      //nome
 			"Goblin",  //raca
-			30,        //vida
-			10,        //dano
+			15,        //vida
+			3,        //dano
 			0,		   //defesa
 			3,		   //velocidade
-			5          //drop de experiencia
+			25          //drop de experiencia
 			);
 		
 		this.setArma(new AdagaGoblin());
@@ -18,31 +19,37 @@ public class Goblin extends Inimigo{
 
 
 	@Override
-	public Item dropItem(){
+	public void dropItem(Jogador jogador){
+		//15% de chance de dropar a excalibur ou 80% de dropar adaga goblin ou não dropa nada
 		if(Sorteador.chance(15)){
 			System.out.println(getNome() + " dropou uma Excalibur!");
-			return new Excalibur();
+			jogador.addItem(new Excalibur());
+			
 		} else if(Sorteador.chance(80)) {
 			System.out.println(getNome() + " dropou uma Adaga goblin");
-			return new AdagaGoblin();
-		} else {
-			return null;			
+			jogador.addItem(new AdagaGoblin());
+			
 		}
+		
+		//100% de chance de drop de pocao de cura
+		jogador.addItem(new PocaoCuraPequena());
+		
+	}
+
+	@Override
+	public void usar(){
+		//--
 	}
 
 
     @Override
-    public void morrer(Jogador jogador) {
+    public void aoMorrer(Jogador jogador) {
         System.out.println(getNome() + " grita: 'Aaargh!' e cai morto. Você ganha " + this.getDropXp() + " XP.");
         jogador.ganharXp(this.getDropXp());
 		
-		Item itemDropado = dropItem();
-		if(itemDropado != null){
-			jogador.addItem(itemDropado);
-		} else {
-			System.out.println(this.getRaca() + " não dropu nenhum item.");
-		}
-		
+		//Drop de itens do goblin
+		dropItem(jogador);
+		goblinsDerrotados++;
     }
 
 
@@ -51,7 +58,7 @@ public class Goblin extends Inimigo{
     public void enemyAi(Jogador jogador) {
 
         //tem 35% de chanche de tentar fugir caso tenha menos de 40% de vidae caso não tenha tentado fugir
-        if(getVida() <= (vidaMax * 0.35) && Sorteador.chance(25) && tentativasFuga == 0){
+        if(getVida() <= (vidaMax * 0.35) && Sorteador.chance(25) && tentativasFuga == 0 && this.vida > 4){
 
                 System.out.println(getNome() + " Tentou fugir...");
 
@@ -67,20 +74,19 @@ public class Goblin extends Inimigo{
         }
 
         //Ataque desesperado caso tenha menos que 50% da vida
-        if(getVida() <= (getVidaMax() * 0.5) && Sorteador.chance(32)){
+        if(getVida() <= (getVidaMax() * 0.5) && Sorteador.chance(23) && getVida() > 4){
 
             System.out.println(getNome() + " Usou o ataque desesperado");
             ataqueDesesperado(jogador);
 
-        } else if(getVida() <= (getVidaMax() * 0.5) && Sorteador.chance(15)) {
+        } else if(getVida() <= (getVidaMax() * 0.5) && Sorteador.chance(27)) {
 
             ataqueEspecial(jogador);
 
-        } else if (Sorteador.chance(85)){
+        } else if (Sorteador.chance(92)){
 
             atacar(jogador);
-
-        } else if(Sorteador.chance(8)){
+        } else{
 
             System.out.println("Goblin errou o ataque!");
         }
@@ -98,6 +104,12 @@ public class Goblin extends Inimigo{
 		}
         jogador.dmgPlayer(danoTmp);
     }
+	
+	
+	public static int getGoblinsDerrotados(){
+		return goblinsDerrotados;
+	}
+	
 
     //Tem 35% de chance de atacar duas vezes causando o dobro de dano
     public void ataqueRapido(Jogador jogador){

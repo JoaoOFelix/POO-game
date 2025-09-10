@@ -1,10 +1,13 @@
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
+//import javax.swing.JOptionPane;
+//import javax.swing.*;
 
 public class program {
 	
     public static void main(String args[]) {
+		
 		new program().iniciarJogo();
 	}
   
@@ -21,6 +24,7 @@ public class program {
 	}
   
 	private void exibirMensagemBoasVindas() {
+		//JOptionPane.showMessageDialog(null, "Bem-vindo " + jogador.getNome() + "!");
         System.out.println("\n \n Bem-vindo " + jogador.getNome() + "!");
     }
   
@@ -50,6 +54,13 @@ public class program {
 		} else {
 			System.out.println("Arma equipada: Nenhuma");
 		}
+
+		if (jogador.hasArmaduraEquipada()){
+			System.out.println("Armadura equipada: " + jogador.getArmaduraEquipada().getNome());
+		} else {
+			System.out.println("Armadura equipada: Nenhuma");
+		}
+
 		
 		System.out.println("===== MENU =====");
         System.out.println("1. Ver status");
@@ -58,6 +69,8 @@ public class program {
         System.out.println("4. Adicionar item");
         System.out.println("5. Iniciar combate");
 		System.out.println("6. Equipar arma");
+		System.out.println("7. Equipar armadura");
+		System.out.println("8. usar cura");
         System.out.println("0. Sair");
         System.out.print("> ");
   }
@@ -94,20 +107,35 @@ public class program {
 		case 6:
 			this.equiparArma();
 			break;
+		case 8:
+			this.usarCura();
+			break;
+		case 7:
+			this.equiparArmadura();
+			break;
+		case 9:			
+			jogador.addItem(new BigBertha());
+			jogador.addItem(new PocaoCuraPequena());
+			jogador.addItem(new ArmaduraGuerreiro());
+			break;
 		case 0:
 			System.out.println("Saindo do jogo...");
 			break;
 		default:
 			System.out.println("Opção inválida!");
 			break;
-}
+	}
     }
+	
+	private void equiparArmadura(){
+		jogador.equiparArmadura();
+	}
 	
 	
 	
 	private void verInventario() {
         System.out.println("Inventário:");
-        System.out.println(jogador.verInventario());
+        System.out.println(jogador.inventario.verInventario());
     }
 
     private void tomarDano() {
@@ -129,7 +157,8 @@ public class program {
 		//String nome, String descricao, Raridade raridade, double dano, double velocidade, double multiCritico, double chanceCritico
         Arma arma = new Arma(nomeArma, "", Raridade.EPICO, danoArma, 3.0, 1.2, chanceCritico);
         jogador.addItem(arma);
-		
+		jogador.addItem(new BigBertha());
+		jogador.addItem(new ArmaduraGuerreiro());
 		
 		
 		//APAGAR
@@ -142,26 +171,52 @@ public class program {
     }
 	
 	
-	
-	private void equiparArma() {
-		verInventario();
+	//colocar no jogador =====================================================================================
+	private void usarCura(){
+		//MUDAR
+		jogador.usarCura();
+		
+		//System.out.println(jogador.inventario.verPocoes());
 
-		System.out.print("Escolha uma arma para equipar (número): ");
+		
+		
+		//jogador.addItem(new BigBertha());
+		//System.out.println(jogador.inventario.verArmas());
+	}
+	
+	//JOGAR PARA O CODIGO DO JOGADOR
+	private void equiparArma() {
+		// Pega apenas as armas do inventário
+		List<Arma> armas = jogador.inventario.getTipo(Arma.class);
+
+		if (armas.isEmpty()) {
+			System.out.println("Nenhuma arma disponível no inventário.");
+			return;
+		}
+
+		// Mostra as armas disponíveis
+		for (int i = 0; i < armas.size(); i++) {
+			Arma a = armas.get(i);
+			System.out.println(i + " - " + a.getNome());
+		}
+
+		// Escolha do jogador
 		Scanner sc = new Scanner(System.in);
 		int escolha = sc.nextInt();
 
-		if (escolha < 0 || escolha >= jogador.getInventario().size()) {
+		// Valida índice
+		if (escolha < 0 || escolha >= armas.size()) {
 			System.out.println("Opção inválida!");
 			return;
 		}
 
-		Item itemEscolhido = jogador.getInventario().get(escolha);
+		// Pega a arma escolhida
+		Arma escolhida = armas.get(escolha); // ✅ correto
 
-		if (itemEscolhido instanceof Arma) {
-			jogador.equiparArma((Arma) itemEscolhido);
-			System.out.println("Você equipou: " + itemEscolhido.getNome());
-		} else {
-			System.out.println("O item selecionado não é uma arma!");
-		}
+		// Equipa a arma
+		jogador.equiparArma(escolhida);
+		System.out.println("Você equipou: " + escolhida.getNome());
+
 	}
+
 }

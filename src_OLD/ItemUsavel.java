@@ -1,4 +1,4 @@
-public class ItemUsavel extends Item {
+public abstract class ItemUsavel extends Item {
 
 	public ItemUsavel(String nome, String descricao, Raridade raridade, double precoVenda, boolean empilhavel, int quantidade){
 		super(
@@ -10,5 +10,8 @@ public class ItemUsavel extends Item {
 			quantidade      //Quantidade de itens
 		);
 	}
+	
+	
+	public abstract void usar(Entidade entidade);
 
 }

@@ -1,4 +1,4 @@
-public class AdagaGoblin extends Arma{
+public final class AdagaGoblin extends Arma{
 
 	public AdagaGoblin(){
 		super(

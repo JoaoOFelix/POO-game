@@ -69,9 +69,4 @@ public class Arma extends Item{
 		
 		return getDano();
 	}
-	
-	@Override
-	public void usar(Jogador jogador){
-		
-	}
 }

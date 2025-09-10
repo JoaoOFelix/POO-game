@@ -1,6 +1,4 @@
-public class Excalibur extends Arma{
-	private double velocidade;
-	private Raridade raridade;
+public final class Excalibur extends Arma{
 	
 	public Excalibur() {
         super(

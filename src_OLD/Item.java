@@ -23,14 +23,7 @@ public abstract class Item {
 		this.precoVenda = 0.0;
 		this.empilhavel = false;
 		this.quantidade = 1;
-	}
-	
-	
-	// void usar abstrato
-	//public abstract void usar(Jogador jogador);
-
-	public void usar(Jogador jogador){}
-	
+	}	
 	 
 	public String getNome(){
 		return this.nome;
@@ -48,7 +41,5 @@ public abstract class Item {
 	public String toString() {
 		return nome + " (" + raridade + ")";
 	}
-	
-	
-	
+		
 }
