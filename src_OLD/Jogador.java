@@ -5,11 +5,12 @@ import java.util.ArrayList;
 public final class Jogador extends Entidade{
 		private int xp;
         private int xpLevel;
+		private double dinheiro;
 		private Arma armaEquipada = null;
 		private Armadura armaduraEquipada = null;		
 		//TORNAR PIRVATE E ADICIONAR OS GETTERS E OS SETTERS
 		public Inventario inventario = new Inventario();
-//		Scanner sacnner = new Scanner(System.in);
+		
 
         
         public Jogador(String nome){
@@ -21,6 +22,7 @@ public final class Jogador extends Entidade{
 				0		//defesa
 			);
 			
+			dinheiro = 0.0;
 			xp = 0;
 			xpLevel = 1;
         }
@@ -34,6 +36,7 @@ public final class Jogador extends Entidade{
 				0		//defesa
 			);
 			
+			dinheiro = 0.0;
 			xp = 0;
 			xpLevel = 1;
 		}
@@ -41,6 +44,20 @@ public final class Jogador extends Entidade{
 	
 		public double getDanoBruto(){
 			return this.dano;
+		}
+		
+		@Override
+		public void atacar(Entidade entidade, Jogador jogador){
+			
+			if(hasArmaEquipada()){
+				armaEquipada.usar(entidade, jogador);
+			}
+			
+			double danoTotal = getDano();
+			
+			System.out.println(this.getNome() + " atacou " + entidade.getNome() + " e causou " + danoTotal + " de dano\n");
+		
+			entidade.tomarDano(danoTotal, jogador);
 		}
 		
 		
@@ -70,6 +87,10 @@ public final class Jogador extends Entidade{
 			return xpLevel; 
 		}
 		
+		public double getDinheiro(){
+			return dinheiro;
+		}
+		
 		public Arma getArmaEquipada(){
 			return armaEquipada;
 		}
@@ -81,12 +102,24 @@ public final class Jogador extends Entidade{
 		//-------------------------------------ACOES-------------------------------------------------------
         
 		
+		public void ganharDinheiro(double dinheiro){
+			this.dinheiro += dinheiro;
+		}
+		
+		public void perderDinheiro(double dinheiro){
+			this.dinheiro -= dinheiro;
+		}
+		
+		
+		
 		//MUDAR PARA tomarDano() e colocar override
         public void dmgPlayer(double dmg){
 			double dmgTotal = dmg;
 			
 			
-			dmgTotal = (dmg - this.defesa);
+			//dmgTotal = (dmg - this.defesa);
+			dmgTotal = calculaDefesa(dmg);
+			
 			
 			if(dmgTotal < 0)
 				dmgTotal = 0;
@@ -179,28 +212,28 @@ public final class Jogador extends Entidade{
 			this.xpLevel++;
             this.xp -= 100;
             System.out.println(getNome() + " Subiu para o level " + getXpLevel() + "!");
-			System.out.println("Jogador ganhou +1 de defesa");
-			this.defesa += 1;
+			System.out.println("Jogador ganhou +3 de defesa");
+			this.defesa += 3;
 			System.out.println("Jogador ganhou +1 de ataque");
 			this.dano += 1;
 			System.out.println("Jogador ganhou +3 de vida");
-			this.vida += 3;
 			this.vidaMax += 3;
 			
 			
+			System.out.println("Jogador ganhou +1 espaços no inventário");
+			this.inventario.aumentarInventario(1);
 			
 			//escolha de atributo a ser melhorado
 			System.out.println("\n Escolha um atributo para ser melhorado:");
 			System.out.println("1 - +3 de vida");
 			System.out.println("2 - +2 de dano");
-			System.out.println("3 - +1 de defesa");
+			System.out.println("3 - +3 de defesa");
 			
 			Scanner sc = new Scanner(System.in);
 			int escolha = sc.nextInt();
 			
 			switch(escolha){
 				case 1:
-					this.vida += 3;
 					this.vidaMax += 3;
 					break;
 				
@@ -209,7 +242,7 @@ public final class Jogador extends Entidade{
 					break;
 					
 				case 3:
-					this.defesa += 1;
+					this.defesa += 3;
 					break;
 			}
 			
@@ -229,14 +262,81 @@ public final class Jogador extends Entidade{
 		//COLOCAR NA ENTIDADE
 		//===============================================================================================
 		public void usarItem(){
-			
+				
 		}
 		
 		
         //Adicionar item
         public void addItem(Item item) {
-			inventario.adicionarItem(item);
+			//item.toString();
+			//System.out.println(item.getNome() + " inventario tem esse item? " + inventario.hasItem(item));
+			
+			if(item.isEmpilhavel() && inventario.hasItem(item)){
+				System.out.println("bigbock");
+				this.inventario.addQuantidade(item, 1);
+			} else {
+				inventario.adicionarItem(item);
+			}
+			
 			System.out.println(item.getNome() + " foi adicionado ao inventário.");
+		}
+		
+		public void venderItem(){
+			List<Item> itens = inventario.getInventario();
+
+
+			System.out.println("Itens disponíveis para venda:");
+			for (int i = 0; i < itens.size(); i++) {
+				Item a = itens.get(i);
+				
+				if(a == this.armaEquipada || a == this.armaduraEquipada){
+					System.out.println(i + " - " + a.getNome() + " (Equipado)" + " - " + a.getPrecoVenda());
+				} else if(a.isEmpilhavel()){
+					System.out.println(i + " - " +  a.getQuantidade() + "x " + a.getNome() + " - " + a.getPrecoVenda());
+				} else {
+					System.out.println(i + " - " + a.getNome() + " - " + a.getPrecoVenda());
+				}
+				
+			}
+
+			
+			System.out.print("Escolha um item para vender (número): ");
+			Scanner sc = new Scanner(System.in);
+			int escolha = sc.nextInt();
+
+			if (escolha < 0 || escolha >= itens.size()) {
+				System.out.println("Opção inválida!");
+				return;
+			}
+
+			Item item = itens.get(escolha);
+
+
+			this.ganharDinheiro(item.getPrecoVenda());
+			
+			
+			if(item.isEmpilhavel()){
+				inventario.removeQuantidade(item, 1);
+			} else {
+				inventario.remover(item);
+			}
+			
+			
+			
+			if(item instanceof Arma){
+				if(item == armaEquipada){
+					armaEquipada = null;
+				}
+			}
+			
+			if(item instanceof Armadura){
+				if(item == armaduraEquipada){
+					armaduraEquipada = null;
+				}
+			}
+			
+			
+			System.out.println("Item vendido");
 		}
         
 		@Override
@@ -284,14 +384,15 @@ public final class Jogador extends Entidade{
 			PocaoCura escolhida = pocoes.get(escolha);
 			
 			if (escolhida instanceof PocaoCura) {
+				if(this.getVida() < 100)				
+					(escolhida).usar(this, this);
 				
-				System.out.println("VIDA ATUAL TESTE: " + this.getVida());
+				if((escolhida).getQuantidade() == 0)
+					this.inventario.remover((escolhida));
 				
-				if(this.getVida() < 100)
-					this.inventario.remover(escolhida);
 				
-					(escolhida).usar(this);
-					
+				System.out.println(this.getVida() + "/"+ this.getVidaMax());
+				
 			} else {
 				System.out.println("O item selecionado não é usável!");
 			}	
@@ -301,6 +402,7 @@ public final class Jogador extends Entidade{
 
         public void getStatus(){
             System.out.println("===============================================");
+			System.out.println("Dinheiro: " + getDinheiro());
             System.out.println("Nome: " + getNome() + " Nível " + getXpLevel());
             System.out.println("Vida " + getVida() + "/" + getVidaMax());
 			System.out.println("Defesa atual: " + getDefesa());
@@ -310,8 +412,10 @@ public final class Jogador extends Entidade{
 			if(armaEquipada != null)
 				System.out.println("Dano crítico: " + (getDanoBruto() + armaEquipada.getCritico()));
             System.out.println("Experiência: " + getXp() + "/100");
-            System.out.println("\n--Inventario--");
-            System.out.println(inventario.verInventario());
+			if(armaEquipada != null)
+				System.out.println("\nArma equipada :" + armaEquipada.getNome());
+            //System.out.println("\n--Inventario--");
+            //System.out.println(inventario.verInventario());
             System.out.println("===============================================");
         }
     

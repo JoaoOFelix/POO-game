@@ -7,8 +7,17 @@ public abstract class PocaoCura extends ItemUsavel {
 	}
 	
 	@Override
-	public void usar(Entidade entidade){
-		entidade.curar(valorCura);
+	public void usar(Entidade entidade, Jogador jogador){
+		this.removeQuantidade(1);
+		
+		
+		
+		jogador.curar(valorCura);
+	}
+	
+	@Override
+	public void usarUnico(Entidade entidade, Jogador jogador){
+		
 	}
 	
 	

@@ -6,15 +6,16 @@ import java.util.Scanner;
 
 public class program {
 	
+	private Scanner scanner = new Scanner(System.in);
+    private Jogador jogador;
+    private Inimigo goblin;
+	
+		
     public static void main(String args[]) {
 		
 		new program().iniciarJogo();
 	}
-  
-	private Scanner scanner = new Scanner(System.in);
-    private Jogador jogador;
-    private Inimigo goblin;
-  
+    
   
 	private void iniciarJogo(){
 		iniciarObjetos();
@@ -29,10 +30,10 @@ public class program {
     }
   
   
-  private void iniciarObjetos(){
-	  System.out.print("Escreva o nome do jogador: ");
-	  jogador = new Jogador(scanner.nextLine());
-  }
+	private void iniciarObjetos(){
+		System.out.print("Escreva o nome do jogador: ");
+		jogador = new Jogador(scanner.nextLine());
+	}
   
   
   private void loopMenu(){
@@ -47,7 +48,8 @@ public class program {
   
   
   private void exibirMenu(){
-		System.out.println("\nVida: " + jogador.getVida() + "/" + jogador.getVidaMax());		
+		System.out.println("\nVida: " + jogador.getVida() + "/" + jogador.getVidaMax());
+		System.out.println("\nDinheiro: " + jogador.getDinheiro());		
 		
 		if (jogador.hasArmaEquipada()){
 			System.out.println("Arma equipada: " + jogador.getArmaEquipada().getNome());
@@ -70,13 +72,15 @@ public class program {
         System.out.println("5. Iniciar combate");
 		System.out.println("6. Equipar arma");
 		System.out.println("7. Equipar armadura");
-		System.out.println("8. usar cura");
+		System.out.println("8. Usar cura");
+		System.out.println("9. Vender Item");
+		System.out.println("10. Loja");
         System.out.println("0. Sair");
         System.out.print("> ");
-  }
+	}
   
   
-  private int lerOpcaoMenu() {
+	private int lerOpcaoMenu() {
         while (!scanner.hasNextInt()) {
             System.out.print("Digite um número válido: ");
             scanner.next();
@@ -107,16 +111,29 @@ public class program {
 		case 6:
 			this.equiparArma();
 			break;
-		case 8:
-			this.usarCura();
-			break;
 		case 7:
 			this.equiparArmadura();
 			break;
-		case 9:			
-			jogador.addItem(new BigBertha());
+		case 8:
+			this.usarCura();
+			break;
+		
+		case 9:
+			jogador.venderItem();
+		
+			break;
+		case 10:
+			abrirLoja();	
+			break;
+		case 11:			
+			//jogador.addItem(new BigBertha());
+			//jogador.addItem(new Excalibur());
+			//jogador.addItem(new EspadaVampirica());
 			jogador.addItem(new PocaoCuraPequena());
-			jogador.addItem(new ArmaduraGuerreiro());
+			jogador.addItem(new PocaoCuraMedia());
+			jogador.addItem(new PocaoCuraGrande());
+			jogador.addItem(new Tridente());
+			//jogador.addItem(new ArmaduraGuerreiro());
 			break;
 		case 0:
 			System.out.println("Saindo do jogo...");
@@ -173,15 +190,7 @@ public class program {
 	
 	//colocar no jogador =====================================================================================
 	private void usarCura(){
-		//MUDAR
 		jogador.usarCura();
-		
-		//System.out.println(jogador.inventario.verPocoes());
-
-		
-		
-		//jogador.addItem(new BigBertha());
-		//System.out.println(jogador.inventario.verArmas());
 	}
 	
 	//JOGAR PARA O CODIGO DO JOGADOR
@@ -217,6 +226,68 @@ public class program {
 		jogador.equiparArma(escolhida);
 		System.out.println("Você equipou: " + escolhida.getNome());
 
+	}
+	
+	
+	
+	
+	private void abrirLoja(){
+		List<Item> itensLoja = new ArrayList<>();
+		double dinheiroJogador = jogador.getDinheiro();
+		double multVenda = 1.05;
+		Item escolhaItem = null;
+
+		itensLoja.add(new EspadaVampirica());
+		itensLoja.add(new PocaoCuraMedia());
+		itensLoja.add(new Excalibur());
+		itensLoja.add(new ArmaduraGuerreiro());
+		itensLoja.add(new Tridente());
+		itensLoja.add(new PorreteOrc());
+		itensLoja.add(new AdagaLadrao());
+		
+		System.out.println("Bem vindo a loja noturna");
+		System.out.println("Dinheiro: " + dinheiroJogador);
+		System.out.println("======================");
+		
+		
+		
+		for (int i = 0; i < itensLoja.size(); i++) {
+			System.out.println(i + "- " + itensLoja.get(i).getNome() + " (" + itensLoja.get(i).getRaridade() + ") " + ": " + itensLoja.get(i).getPrecoVenda() * multVenda);
+		}
+		
+		
+		System.out.println("0- Sair");
+		
+		// Escolha do jogador
+		System.out.print(">");
+		Scanner sc = new Scanner(System.in);
+		int escolha = sc.nextInt();
+		
+		
+		
+		if (escolha >= 0 && escolha < itensLoja.size()) {
+			escolhaItem = itensLoja.get(escolha);
+		} else {
+			System.out.println("Opção inválida!");
+		}
+
+		
+		
+		
+		
+		if(escolhaItem != null){
+			
+			if(dinheiroJogador >= escolhaItem.getPrecoVenda() * multVenda){
+				jogador.addItem(escolhaItem);
+				jogador.perderDinheiro(escolhaItem.getPrecoVenda() * multVenda);
+			} else {
+				System.out.println("Dinheiro insuficiente");
+			}
+		} else {
+			System.out.println("Saindo");
+		}
+		
+		
 	}
 
 }

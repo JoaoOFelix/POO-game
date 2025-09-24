@@ -1,11 +1,12 @@
-public class Arma extends Item{
+public class Arma extends ItemUsavel{
 	protected double dano;
 	protected double velocidade;
 	protected double multiCritico;
 	protected double chanceCritico;
 	
 	
-	public Arma(String nome, String descricao, Raridade raridade, double precoVenda, boolean empilhavel, int quantidade, double dano, double velocidade, double multiCritico, double chanceCritico) {
+	public Arma(String nome, String descricao, Raridade raridade, double precoVenda, boolean empilhavel,
+				int quantidade, double dano, double velocidade, double multiCritico, double chanceCritico) {
         super(
 			nome,
 			descricao,
@@ -25,6 +26,12 @@ public class Arma extends Item{
 		}
 		this.chanceCritico = chanceCritico;
     }
+	
+	@Override
+	public void usar(Entidade entidade, Jogador jogador){}
+	
+	@Override
+	public void usarUnico(Entidade entidade, Jogador jogador){}
 	
 	
 	public Arma(String nome, String descricao, Raridade raridade, double dano, double velocidade, double multiCritico, double chanceCritico) {
@@ -67,6 +74,10 @@ public class Arma extends Item{
 			return getCritico();
 		}
 		
+		return getDano();
+	}
+	
+	public double ataqueSemCritico(){
 		return getDano();
 	}
 }

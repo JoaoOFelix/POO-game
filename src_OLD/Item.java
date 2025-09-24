@@ -1,10 +1,10 @@
 public abstract class Item {
-	protected String nome;
-	protected String descricao;
-	protected Raridade raridade;
-	protected double precoVenda;
-	protected boolean empilhavel;
-	protected int quantidade;
+	private final String nome;
+	private final String descricao;
+	private Raridade raridade;
+	private double precoVenda;
+	private boolean empilhavel;
+	private int quantidade;
 	
 	
 	public Item(String nome, String descricao, Raridade raridade, double precoVenda, boolean empilhavel, int quantidade){
@@ -37,9 +37,59 @@ public abstract class Item {
 		return raridade;
 	}
 	
+	public double getPrecoVenda() {
+		return precoVenda;
+	}
+	
+	public int getQuantidade(){
+		return quantidade;
+	}
+	
+	public void addQuantidade(int qtd){
+		if(this.isEmpilhavel()){
+			quantidade += qtd;
+		}
+	}
+	
+	public void removeQuantidade(int qtd){
+		if(this.isEmpilhavel()){
+			quantidade -= qtd;
+		}
+	}
+	
+	public boolean isEmpilhavel(){
+		return empilhavel;
+	}
+	
 	@Override
 	public String toString() {
 		return nome + " (" + raridade + ")";
+	}
+	
+	public void mostrarItem(){
+		
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append(" - ");
+			if(isEmpilhavel())
+				sb.append(quantidade + "x ");
+			sb.append(this.getNome() + " - " + this.getRaridade())
+			.append("\n | Descrição: ").append(this.getDescricao());
+    
+			// Se for arma, mostrar dano também
+			if (this instanceof Arma) {
+				Arma arma = (Arma) this;
+				sb.append("\n | Dano: ").append(arma.getDano())
+				.append("\n | Velocidade: ").append(arma.getVelocidade())
+				.append("\n | Chance de critico: ").append(arma.getChanceCritico())
+				.append("\n | Multiplicador de dano critico: ").append(arma.getMultiplicadorCritico());
+			}
+    
+			sb.append("\n");
+			
+			
+			
+			System.out.println(sb.toString());
 	}
 		
 }

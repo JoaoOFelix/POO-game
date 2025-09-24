@@ -12,6 +12,8 @@ public abstract class ItemUsavel extends Item {
 	}
 	
 	
-	public abstract void usar(Entidade entidade);
+	public abstract void usar(Entidade entidade, Jogador jogador);
+	
+	public abstract void usarUnico(Entidade entidade, Jogador jogador);
 
 }

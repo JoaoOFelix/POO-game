@@ -5,13 +5,13 @@ public final class AdagaGoblin extends Arma{
 			"Adaga goblin", 
             "Adaga usada por goblins!", 
             Raridade.COMUM, 
-            50.0,   // preço venda
+            90.0,   // preço venda
             false,  // empilhável
             1,      // quantidade
             5.0,    // dano
             4.5,    // velocidade
-            1.1,    // multiplicador crítico
-			20		// chance de critico
+            1.8,    // multiplicador crítico
+			30		// chance de critico
 		);
 	}
 

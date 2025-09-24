@@ -10,4 +10,5 @@ public final class PocaoCuraGrande extends PocaoCura{
 			75 //quantidade de cura
 		);
 	}
+	
 }

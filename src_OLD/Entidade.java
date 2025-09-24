@@ -24,7 +24,8 @@ public abstract class Entidade {
 	
 	
 	public void tomarDano(double dano, Jogador jogador){
-		double danoFinal = Math.max(0, dano - this.defesa);
+		//double danoFinal = Math.max(0, dano - this.defesa);
+		double danoFinal = calculaDefesa(dano);
 		this.vida = Math.max(0, this.vida - danoFinal);
 
 		System.out.println(this.nome + " tomou " + danoFinal + " de dano!");
@@ -36,7 +37,7 @@ public abstract class Entidade {
 	public void curar(double cura){
 		double vidaAntiga = this.vida;
 		
-		if(vidaAntiga < 100){
+		if(vidaAntiga < vidaMax){
 			this.vida += cura;
 			if(this.vida > this.vidaMax){
 				this.vida = this.vidaMax;
@@ -53,6 +54,7 @@ public abstract class Entidade {
 	}
 	
 	public void atacar(Entidade entidade, Jogador jogador){
+		
 		double danoTotal = getDano();
 			
 		System.out.println(this.getNome() + " atacou " + entidade.getNome() + " e causou " + danoTotal + " de dano\n");
@@ -61,6 +63,16 @@ public abstract class Entidade {
 	}
 	
 	
+	public double calculaDefesa(double dano){
+		//log
+		System.out.println(dano - (dano * (defesa / 100)));
+		return dano - (dano * (defesa / 100));
+	}
+	
+	
+	
+	
+	//getters e setters
 	public String getNome() {
 		return nome;
 	}
@@ -98,6 +110,20 @@ public abstract class Entidade {
 	}
 
 	public void setDefesa(double defesa) {
+		if(defesa < 0)
+			defesa = 0;
 		this.defesa = defesa;
+	}
+	
+	
+	
+	
+	
+	public void diminuirDefesa(double qnt){
+		this.defesa -= qnt;
+	}
+	
+	public void diminuirDano(double qnt){
+		this.dano -= qnt;
 	}
 }

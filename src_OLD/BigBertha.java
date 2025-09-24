@@ -8,10 +8,10 @@ public final class BigBertha extends Arma{
             1250.0, // preço venda
             false,  // empilhável
             1,      // quantidade
-            14.0,   // dano
+            17.0,   // dano
             6.0,    // velocidade
-            2.0,    // multiplicador crítico
-			25      // chanche de critico
+            1.6,    // multiplicador crítico
+			10      // chanche de critico
         );
 	}
 

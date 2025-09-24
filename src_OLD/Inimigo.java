@@ -3,7 +3,7 @@ public abstract class Inimigo extends Entidade{
     protected double velocidade;
     protected int dropXp;
 	protected Arma arma = null;
-
+	protected boolean fuga = false;
 
     public Inimigo(String nome, String raca, double vida, double dano, double defesa, double velocidade, int dropXp) {
 		super(
@@ -37,8 +37,6 @@ public abstract class Inimigo extends Entidade{
 
     public String getRaca() {return this.raca;}
 
-    public double getDanoBruto() {return this.dano;}
-
     public double getVida() {return this.vida;}
 
     public double getVidaMax() {return this.vidaMax;}
@@ -49,18 +47,33 @@ public abstract class Inimigo extends Entidade{
 
     public double getVelocidade() {return this.velocidade;}
 	
-	public double danoTotal(){
-		return getDanoBruto() + arma.ataqueCritico();
+	public double getDano(){return this.dano;}
+	
+	
+	// ==
+	
+	
+	public double danoSemCritico(){
+		
+		if(hasArma()){
+			System.out.println("DANO SEM CRITICO COM ARMA APLICADO");
+			return getDano() + arma.getDano();
+		}
+		
+		
+		return getDano();
 	}
 	
-	public double getDano(){
+	public double danoCritico(){
+		if(hasArma()){
+			return arma.ataqueCritico();
+		}
+		
+		return getDano();
+	}
 	
-		return hasArma() ? danoTotal() : getDanoBruto();
-	
-		//if(hasArma()){
-		//	return danoTotal();
-		//}
-		//return getDanoBruto();
+	public double danoCriticoTotal(){
+		return getDano() + arma.getCritico();
 	}
 
 
@@ -71,7 +84,7 @@ public abstract class Inimigo extends Entidade{
 	public abstract void dropItem(Jogador jogador);
 
     public void atacar(Jogador jogador){
-		jogador.dmgPlayer(getDano());
+		jogador.dmgPlayer(danoCritico());
 	} 
 	
 	
@@ -106,5 +119,14 @@ public abstract class Inimigo extends Entidade{
            "\nDefesa: " + defesa +
            "\nVelocidade: " + velocidade;
     }
+	
+	public void fuga(){
+        System.out.println("TESTE DE FUGA---");
+		this.fuga  = true;
+    }
+	
+	public boolean getFuga(){
+		return fuga;
+	}
 	
 }

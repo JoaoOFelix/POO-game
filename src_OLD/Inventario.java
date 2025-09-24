@@ -8,7 +8,7 @@ public class Inventario<T extends Item>{
 	
 	public Inventario() {
         this.itens = new ArrayList<>();
-		slotsInventario = 8;
+		slotsInventario = 99;
     }
 
 	
@@ -17,9 +17,11 @@ public class Inventario<T extends Item>{
 			itens.add(item);
 		} else {
 			System.out.println("Inventário está cheio!");
-		}
-		
-		
+		}	
+	}
+	
+	public void aumentarInventario(int quantidade){
+		slotsInventario += quantidade;
 	}
 	
 	public void remover(T item){
@@ -37,7 +39,6 @@ public class Inventario<T extends Item>{
         }
 	}
 	
-	
 	public List<T> getInventario(){
 		return itens; // retorna a lista real de itens
 	}
@@ -54,18 +55,20 @@ public class Inventario<T extends Item>{
 			
 			Item item = itens.get(i);
     
-			sb.append(i).append(" - ")
-			.append(item.getNome())
-			.append(" | Raridade: ").append(item.getRaridade())
-			.append(" | Descrição: ").append(item.getDescricao());
+			System.out.println(item.getQuantidade() + "qtd");
+			sb.append(i).append(" - ");
+			if(item.isEmpilhavel())
+				sb.append(item.getQuantidade() + "x ");
+			sb.append(item.getNome() + " - " + item.getRaridade())
+			.append("\n| Descrição: ").append(item.getDescricao());
     
 			// Se for arma, mostrar dano também
 			if (item instanceof Arma) {
 				Arma arma = (Arma) item;
-				sb.append(" | Dano: ").append(arma.getDano())
-				.append(" | Velocidade: ").append(arma.getVelocidade())
-				.append(" | Chance de critico: ").append(arma.getChanceCritico())
-				.append(" | Multiplicador de dano critico: ").append(arma.getMultiplicadorCritico());
+				sb.append("\n| Dano: ").append(arma.getDano())
+				.append("\n| Velocidade: ").append(arma.getVelocidade())
+				.append("\n| Chance de critico: ").append(arma.getChanceCritico())
+				.append("\n| Multiplicador de dano critico: ").append(arma.getMultiplicadorCritico());
 			}
     
 			sb.append("\n");
@@ -151,6 +154,7 @@ public class Inventario<T extends Item>{
 		for (int i = 0; i < pocoes.size(); i++) {
 			PocaoCura p = pocoes.get(i);
 			sb.append(i).append(" - ")
+			  .append(p.getQuantidade()).append("x ")
 			  .append(p.getNome())
 			  .append(" | Raridade: ").append(p.getRaridade())
 			  .append(" | Descrição: ").append(p.getDescricao())
@@ -172,6 +176,47 @@ public class Inventario<T extends Item>{
 		}
 		return lista;
 
+	}
+	
+	public boolean hasItem(Item item){
+		for(Item i : itens){			
+			if(item.getClass() == i.getClass()){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public void addQuantidade(Item item, int qtd){
+		if(item.isEmpilhavel() && this.hasItem(item)){
+			for(Item i : itens){			
+				if(item.getClass() == i.getClass()){
+					i.addQuantidade(qtd);
+				}
+			}
+		}
+	}
+	
+	public void removeQuantidade(Item item, int qtd){
+		if(item.isEmpilhavel() && this.hasItem(item)){
+			T itemRemovido = null;
+			
+			for(T i : itens){			
+				if(item.getClass() == i.getClass()){
+					if(i.getQuantidade() <= 1){
+						//remoção apos o foreach para evitar erro
+						//this.remover(i);
+						itemRemovido = i;
+					} else {
+						i.removeQuantidade(qtd);
+					}
+					break;
+				}
+			}
+			
+			if(item != null)
+				this.remover(itemRemovido);
+		}
 	}
 	
 	

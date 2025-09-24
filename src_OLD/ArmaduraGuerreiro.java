@@ -10,7 +10,7 @@ public final class ArmaduraGuerreiro extends Armadura{
             false,  // empilhável
             1,      // quantidade
             50,     //duarabilidade
-			4        //defesa
+			20        //defesa
 		);
 	}
 

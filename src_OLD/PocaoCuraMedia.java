@@ -10,4 +10,5 @@ public final class PocaoCuraMedia extends PocaoCura{
 			45 //quantidade de cura
 		);
 	}
+
 }

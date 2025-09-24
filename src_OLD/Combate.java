@@ -24,9 +24,9 @@ public class Combate {
     }
 	
 	private void criarInimigos(){
-		int spawnChance = 18;
+		int spawnChance = 5;
 		int goblinsDerrotados = Goblin.getGoblinsDerrotados();
-		//SorteadorNomes sorteador = new SorteadorNomes();
+	
 		
 		//calcura a chanhce de de encontrar orcs com base na quantidade de golbins derrotados
 		if(goblinsDerrotados > 0){
@@ -54,18 +54,25 @@ public class Combate {
 
         if(inimigo.isAlive())
             enemyTurn();
+		
+		
+		if(turno == 0 && jogador.getArmaEquipada() != null){
+			jogador.getArmaEquipada().usarUnico(inimigo, jogador);
+		}
+		
+		turno++;
     }
 	
 	private void sorteadorNomes() {
-    try {
-        goblins = Files.readAllLines(Paths.get("nomesGoblin.txt"));
-        orcs = Files.readAllLines(Paths.get("nomesOrc.txt"));
-    } catch (IOException e) {
-        System.out.println("Erro ao ler arquivos de nomes: " + e.getMessage());
-        goblins = new java.util.ArrayList<String>();
-        orcs = new java.util.ArrayList<String>();
-    }
-}
+		try {
+			goblins = Files.readAllLines(Paths.get("nomesGoblin.txt"));
+			orcs = Files.readAllLines(Paths.get("nomesOrc.txt"));
+		} catch (IOException e) {
+			System.out.println("Erro ao ler arquivos de nomes: " + e.getMessage());
+			goblins = new java.util.ArrayList<String>();
+			orcs = new java.util.ArrayList<String>();
+		}
+	}
 
 	
 	public String sortearGoblin() {
@@ -114,18 +121,13 @@ public class Combate {
                 case 1:
                     System.out.println("\nStats " + jogador.getNome());
                     jogador.getStatus();
-
                     System.out.println("\nStats " + inimigo.getRaca());
                     System.out.println(inimigo.getStatus());
-
-
                     break;
 
                 case 2:
                     System.out.println("Inventario:");
                     System.out.println(jogador.inventario.getInventario());
-
-
                     break;
 
                 case 3:
@@ -144,16 +146,19 @@ public class Combate {
                     System.out.println("Opcao invalida!");
             }
 
-        } while (opcao != 0 && jogador.isAlive() && inimigo.isAlive());
+        } while (opcao != 0 && jogador.isAlive() && inimigo.isAlive() && !inimigo.getFuga());
 
         if (!jogador.isAlive()) {
             System.out.println("Fim de jogo: o jogador morreu.");
         }
 
         if(!inimigo.isAlive()){
-			//System.out.println("TESTE DE MORTE INIMIGO");
             System.out.println(jogador.getNome() + " derrotou " + inimigo.getNome() + " o " + inimigo.getRaca());
             //inimigo.morrer(jogador);
         }
+		
+		if(inimigo.getFuga()){
+			System.out.println("Inimigo fugiu...");
+		}
     }
 }

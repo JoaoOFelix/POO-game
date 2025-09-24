@@ -10,4 +10,6 @@ public final class PocaoCuraPequena extends PocaoCura{
 			15 //quantidade de cura
 		);
 	}
+	
+	
 }

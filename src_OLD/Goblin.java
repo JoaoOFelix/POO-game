@@ -1,6 +1,17 @@
 public final class Goblin extends Inimigo{
+	private static final double CHANCE_FUGA_TENTAR = 25.0;
+	private static final double CHANCE_FUGA_SUCESSO = 30.0;
+	private static final double CHANCE_ATAQUE_DESESPERADO = 23.0;
+	private static final double CHANCE_ATAQUE_ESPECIAL = 27.0;
+	private static final double CHANCE_ATAQUE_NORMAL = 92.0;
+	private static final double CHANCE_DROP_EXCALIBUR = 10.0;
+	private static final double CHANCE_DROP_ADAGA = 60.0;
+
 	private int tentativasFuga = 0;
 	protected static int goblinsDerrotados = 0;
+	
+	//reanalizar
+	private boolean fuga = false;
 
 	public Goblin(String nome){
 		
@@ -21,18 +32,25 @@ public final class Goblin extends Inimigo{
 	@Override
 	public void dropItem(Jogador jogador){
 		//15% de chance de dropar a excalibur ou 80% de dropar adaga goblin ou não dropa nada
-		if(Sorteador.chance(15)){
+		if(Sorteador.chance(CHANCE_DROP_EXCALIBUR)){
 			System.out.println(getNome() + " dropou uma Excalibur!");
 			jogador.addItem(new Excalibur());
 			
-		} else if(Sorteador.chance(80)) {
+		} else if(Sorteador.chance(CHANCE_DROP_ADAGA)) {
 			System.out.println(getNome() + " dropou uma Adaga goblin");
 			jogador.addItem(new AdagaGoblin());
 			
+		} else if(Sorteador.chance(80)){
+			System.out.println(getNome() + " dropou uma Armadura Goblin");
+			jogador.addItem(new ArmaduraGoblin());
 		}
 		
 		//100% de chance de drop de pocao de cura
-		jogador.addItem(new PocaoCuraPequena());
+		if(Sorteador.chance(90)){
+			jogador.addItem(new PocaoCuraPequena());
+		} else {
+			jogador.addItem(new PocaoCuraMedia());
+		}
 		
 	}
 
@@ -57,13 +75,13 @@ public final class Goblin extends Inimigo{
     @Override
     public void enemyAi(Jogador jogador) {
 
-        //tem 35% de chanche de tentar fugir caso tenha menos de 40% de vidae caso não tenha tentado fugir
-        if(getVida() <= (vidaMax * 0.35) && Sorteador.chance(25) && tentativasFuga == 0 && this.vida > 4){
-
+        //tem 8% de chanche de tentar fugir caso tenha menos de 50% de vidae caso não tenha tentado fugir
+        if(getVida() <= (vidaMax * 0.50) && Sorteador.chance(8) && tentativasFuga == 0 && this.vida > 4){
+			
                 System.out.println(getNome() + " Tentou fugir...");
 
-                //30% de chance de fuga
-                if(Sorteador.chance(30)) {
+                //40% de chance de fuga
+                if(Sorteador.chance(40)) {
                     System.out.println(getNome() + " conseguiu fugir da batalha");
                     fuga();
                 } else {
@@ -71,31 +89,36 @@ public final class Goblin extends Inimigo{
                 }
 
                 tentativasFuga++;
-        }
+        } else {
+			//Ataque desesperado caso tenha menos que 50% da vida
+			if(getVida() <= (getVidaMax() * 0.5) && Sorteador.chance(23) && getVida() > 4){
 
-        //Ataque desesperado caso tenha menos que 50% da vida
-        if(getVida() <= (getVidaMax() * 0.5) && Sorteador.chance(23) && getVida() > 4){
+				System.out.println(getNome() + " Usou o ataque desesperado");
+				ataqueDesesperado(jogador);
 
-            System.out.println(getNome() + " Usou o ataque desesperado");
-            ataqueDesesperado(jogador);
+			} else if(getVida() <= (getVidaMax() * 0.5) && Sorteador.chance(27)) {
 
-        } else if(getVida() <= (getVidaMax() * 0.5) && Sorteador.chance(27)) {
+				ataqueEspecial(jogador);
 
-            ataqueEspecial(jogador);
+			} else if (Sorteador.chance(92)){
 
-        } else if (Sorteador.chance(92)){
+				if(Sorteador.chance(75)){
+					atacar(jogador);
+				} else {
+					ataqueRapido(jogador);
+				}
+				
+			} else {
 
-            atacar(jogador);
-        } else{
-
-            System.out.println("Goblin errou o ataque!");
-        }
+				System.out.println("Goblin errou o ataque!");
+			}
+		}
 
     }
 
     @Override
     public void atacar(Jogador jogador) {
-		double danoTmp = this.getDano();
+		double danoTmp = danoCritico();
 		
 		if(hasArma()){
 			System.out.println(getNome() + " ataca com " + arma.getNome() + "! Causando " + danoTmp + " de dano.");
@@ -113,16 +136,19 @@ public final class Goblin extends Inimigo{
 
     //Tem 35% de chance de atacar duas vezes causando o dobro de dano
     public void ataqueRapido(Jogador jogador){
-		double danoTmp = getDano();
+		double danoTmp = danoSemCritico();
+		double danoDuplo = danoTmp * 1.75;
+		double danoUnico = danoTmp * 0.75;
 		
-        if(Sorteador.chance(35)){
+		
+        if(Sorteador.chance(65)){
             System.out.println("Tentou atacar rápido, e atingiu 2 vezes");
-            System.out.println("Goblin causou " + danoTmp * 2);
-            jogador.dmgPlayer(danoTmp * 2);
+            System.out.println("Goblin causou " + danoDuplo);
+            jogador.dmgPlayer(danoDuplo);
         } else {
             System.out.println("Tentou atacar rápido, mas atingiu apenas 1 vez");
-            System.out.println("Goblin causou " + danoTmp * 0.75);
-            jogador.dmgPlayer(danoTmp * 0.75);
+            System.out.println("Goblin causou " + danoUnico);
+            jogador.dmgPlayer(danoUnico);
         }
     }
 
@@ -136,21 +162,28 @@ public final class Goblin extends Inimigo{
     }
 
     public void ataqueEspecial(Jogador jogador){
-		double danoTmp = getDano();
+		double danoTmp = danoSemCritico();
+		double danoEspecial = danoTmp * 2.25;
 		
-        System.out.println(getRaca() + " usou seu ataque especial e causou " + (getDano() * 2) + " de dano");
-        jogador.dmgPlayer(getDano() * 2);
+        System.out.println(getRaca() + " usou seu ataque especial e causou " + (danoEspecial) + " de dano");
+        jogador.dmgPlayer(danoEspecial);
     }
 
     public void ataqueDesesperado(Jogador jogador){
-		double danoTmp = getDano();
+		double danoTmp = danoSemCritico();
 		
         System.out.println("Goblin causou " + danoTmp * 1.5 + " mas no desespero se acertou tomando 4 de dano");
         jogador.dmgPlayer(danoTmp * 1.5);
         this.tomarDano(4, jogador);
     }
 
+	@Override
     public void fuga(){
-        System.out.println("TESTE DE FUGA---");
+        this.fuga  = true;
     }
+	
+	@Override
+	public boolean getFuga(){
+		return fuga;
+	}
 }
