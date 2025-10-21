@@ -1,4 +1,4 @@
-public class Armadura extends Item {
+public class Armadura extends ItemUsavel {
 	protected int durabilidade;
 	protected double defesa;
 	
@@ -15,11 +15,31 @@ public class Armadura extends Item {
 		this.defesa = defesa;
 	}
 	
+	@Override
+	public void usar(Entidade alvo, Entidade usuario){
+	}
+	
+	@Override
+	public void usarUnico(Entidade alvo, Entidade usuario){
+		
+	}
+	
+	public void habilidadeArmadura(Entidade usuario, Entidade origem, double dano){
+		System.out.println("Habilidade da Armadura");
+	}
+	
+	public double defesaArmadura(Entidade origem, double dano){
+		return dano;
+	}
 	
 	
 	public double getDefesa(){
-			return this.defesa;
-		}
+		return this.defesa;
+	}
+	
+	public void setDefesa(double defesa){
+		this.defesa = defesa;
+	}
 		
 	public int getDurabilidade(){
 		return this.durabilidade;

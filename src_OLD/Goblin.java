@@ -1,16 +1,25 @@
 public final class Goblin extends Inimigo{
+	//status
+	private static final double VIDA_GOBLIN = 25.0;
+	private static final double DANO_GOBLIN = 3.0;
+	private static final double DEFESA_GOBLIN = 0.0;
+	private static final double VELOCIDADE_GOBLIN = 3.0;
+	private static final int DROP_XP_GOBLIN = 25;
+	
+	//Chances
 	private static final double CHANCE_FUGA_TENTAR = 25.0;
 	private static final double CHANCE_FUGA_SUCESSO = 30.0;
 	private static final double CHANCE_ATAQUE_DESESPERADO = 23.0;
 	private static final double CHANCE_ATAQUE_ESPECIAL = 27.0;
 	private static final double CHANCE_ATAQUE_NORMAL = 92.0;
-	private static final double CHANCE_DROP_EXCALIBUR = 10.0;
-	private static final double CHANCE_DROP_ADAGA = 60.0;
-
+	private static final double CHANCE_DROP_EXCALIBUR = 2.0;
+	private static final double CHANCE_DROP_ADAGA_GOBLIN = 80.0;
+	private static final double CHANCE_DROP_ADAGA_LADRAO = 40.0;
+	
+	
+	
 	private int tentativasFuga = 0;
 	protected static int goblinsDerrotados = 0;
-	
-	//reanalizar
 	private boolean fuga = false;
 
 	public Goblin(String nome){
@@ -18,30 +27,36 @@ public final class Goblin extends Inimigo{
 		super(
 			nome,      //nome
 			"Goblin",  //raca
-			15,        //vida
-			3,        //dano
-			0,		   //defesa
-			3,		   //velocidade
-			25          //drop de experiencia
+			VIDA_GOBLIN,        //vida
+			DANO_GOBLIN,        //dano
+			DEFESA_GOBLIN,		   //defesa
+			VELOCIDADE_GOBLIN,		   //velocidade
+			DROP_XP_GOBLIN          //drop de experiencia
 			);
 		
 		this.setArma(new AdagaGoblin());
+		this.dinheiro = 34;
 	}
-
 
 	@Override
 	public void dropItem(Jogador jogador){
-		//15% de chance de dropar a excalibur ou 80% de dropar adaga goblin ou não dropa nada
+		//2% de chance de dropar a excalibur ou 80% de dropar adaga goblin ou não dropa nada
 		if(Sorteador.chance(CHANCE_DROP_EXCALIBUR)){
-			System.out.println(getNome() + " dropou uma Excalibur!");
+			System.out.print(getNome() + " dropou uma EXCALIBUR!");
 			jogador.addItem(new Excalibur());
 			
-		} else if(Sorteador.chance(CHANCE_DROP_ADAGA)) {
-			System.out.println(getNome() + " dropou uma Adaga goblin");
+		} else if(Sorteador.chance(CHANCE_DROP_ADAGA_GOBLIN)) {
+			System.out.print(getNome() + " dropou uma Adaga goblin");
 			jogador.addItem(new AdagaGoblin());
 			
-		} else if(Sorteador.chance(80)){
-			System.out.println(getNome() + " dropou uma Armadura Goblin");
+		} else if(Sorteador.chance(CHANCE_DROP_ADAGA_LADRAO)){
+			System.out.print(getNome() + " dropou uma Adaga ladrão");
+			jogador.addItem(new AdagaLadrao());
+		}
+		
+		
+		if(Sorteador.chance(15)){
+			System.out.print(getNome() + " dropou uma Armadura Goblin");
 			jogador.addItem(new ArmaduraGoblin());
 		}
 		
@@ -61,12 +76,14 @@ public final class Goblin extends Inimigo{
 
 
     @Override
-    public void aoMorrer(Jogador jogador) {
+    protected void aoMorrer(Jogador jogador) {
         System.out.println(getNome() + " grita: 'Aaargh!' e cai morto. Você ganha " + this.getDropXp() + " XP.");
         jogador.ganharXp(this.getDropXp());
 		
 		//Drop de itens do goblin
 		dropItem(jogador);
+		dropDinheiro(jogador, this.dinheiro);
+		
 		goblinsDerrotados++;
     }
 
@@ -121,11 +138,12 @@ public final class Goblin extends Inimigo{
 		double danoTmp = danoCritico();
 		
 		if(hasArma()){
-			System.out.println(getNome() + " ataca com " + arma.getNome() + "! Causando " + danoTmp + " de dano.");
+			System.out.println(getNome() + " ataca com " + getArma().getNome() + "! Causando " + danoTmp + " de dano.");
+			habilidadeArma(jogador);
 		} else {
 			System.out.println(getNome() + " ataca com os punhos! Causando " + danoTmp + " de dano");
 		}
-        jogador.dmgPlayer(danoTmp);
+        jogador.tomarDano(danoTmp, this, jogador);
     }
 	
 	
@@ -144,11 +162,16 @@ public final class Goblin extends Inimigo{
         if(Sorteador.chance(65)){
             System.out.println("Tentou atacar rápido, e atingiu 2 vezes");
             System.out.println("Goblin causou " + danoDuplo);
-            jogador.dmgPlayer(danoDuplo);
+            jogador.tomarDano(danoDuplo, this, jogador);
+			
+			habilidadeArma(jogador);
+			habilidadeArma(jogador);
         } else {
             System.out.println("Tentou atacar rápido, mas atingiu apenas 1 vez");
             System.out.println("Goblin causou " + danoUnico);
-            jogador.dmgPlayer(danoUnico);
+            jogador.tomarDano(danoUnico, this, jogador);
+			
+			habilidadeArma(jogador);
         }
     }
 
@@ -166,15 +189,19 @@ public final class Goblin extends Inimigo{
 		double danoEspecial = danoTmp * 2.25;
 		
         System.out.println(getRaca() + " usou seu ataque especial e causou " + (danoEspecial) + " de dano");
-        jogador.dmgPlayer(danoEspecial);
+        jogador.tomarDano(danoEspecial, this, jogador);
+		
+		habilidadeArma(jogador);
     }
 
     public void ataqueDesesperado(Jogador jogador){
 		double danoTmp = danoSemCritico();
 		
         System.out.println("Goblin causou " + danoTmp * 1.5 + " mas no desespero se acertou tomando 4 de dano");
-        jogador.dmgPlayer(danoTmp * 1.5);
-        this.tomarDano(4, jogador);
+        jogador.tomarDano((danoTmp * 1.5), this, jogador);
+        this.tomarDano(4, this, jogador);
+		
+		habilidadeArma(jogador);
     }
 
 	@Override
@@ -185,5 +212,12 @@ public final class Goblin extends Inimigo{
 	@Override
 	public boolean getFuga(){
 		return fuga;
+	}
+	
+	public void habilidadeArma(Jogador jogador){
+		if(hasArma()){
+			this.getArma().usar(jogador, this);
+			//System.out.println("Usado a habilidade da arma");
+		}
 	}
 }

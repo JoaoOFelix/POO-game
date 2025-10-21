@@ -4,19 +4,14 @@ public final class PorreteOrc extends Arma {
             "Porrete Orc", 
             "Um forte porrete usado por Orcs", 
             Raridade.RARO, 
-            300.0, // preço venda
+            500.0, // preço venda
             false,  // empilhável
             1,      // quantidade
             8.0,   // dano
             1.5,    // velocidade
-            2,    // multiplicador crítico
-			20      // chanche de critico
+            2.0,    // multiplicador crítico
+			20,      // chanche de critico
+			false   //Dano verdadeiro
         );
-	}
-	
-	@Override
-	public void usar(Entidade entidade, Jogador jogador){
-		
-	}
-	
+	}	
 }

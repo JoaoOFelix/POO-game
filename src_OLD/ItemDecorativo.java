@@ -8,4 +8,14 @@ public class ItemDecorativo extends Item {
 			raridade
 		);
 	}
+	/*
+	public ItemDecorativo(String nome, String descricao, Raridade raridade, boolean empilhavel){
+		super(
+			nome,
+			descricao,
+			raridade,
+			empilhavel
+		);
+	}
+	*/
 }

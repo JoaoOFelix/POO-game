@@ -4,8 +4,7 @@ public abstract class Item {
 	private Raridade raridade;
 	private double precoVenda;
 	private boolean empilhavel;
-	private int quantidade;
-	
+	private int quantidade;	
 	
 	public Item(String nome, String descricao, Raridade raridade, double precoVenda, boolean empilhavel, int quantidade){
 		this.nome = nome;
@@ -21,7 +20,7 @@ public abstract class Item {
 		this.descricao = descricao;
 		this.raridade = raridade;
 		this.precoVenda = 0.0;
-		this.empilhavel = false;
+		this.empilhavel = true;
 		this.quantidade = 1;
 	}	
 	 
@@ -82,8 +81,13 @@ public abstract class Item {
 				sb.append("\n | Dano: ").append(arma.getDano())
 				.append("\n | Velocidade: ").append(arma.getVelocidade())
 				.append("\n | Chance de critico: ").append(arma.getChanceCritico())
-				.append("\n | Multiplicador de dano critico: ").append(arma.getMultiplicadorCritico());
+				.append("\n | Multiplicador de dano critico: ").append(Formata.formatar(arma.getMultiplicadorCritico()));
+			} else if (this instanceof Armadura){
+				Armadura armadura = (Armadura) this;
+				sb.append("\n | Defesa: ").append(armadura.getDefesa())
+				.append("\n | Durabilidade: ").append(armadura.getDurabilidade());
 			}
+			
     
 			sb.append("\n");
 			

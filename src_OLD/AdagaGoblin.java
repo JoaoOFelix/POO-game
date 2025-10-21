@@ -10,10 +10,9 @@ public final class AdagaGoblin extends Arma{
             1,      // quantidade
             5.0,    // dano
             4.5,    // velocidade
-            1.8,    // multiplicador crítico
-			30		// chance de critico
+            1.7,    // multiplicador crítico
+			30,		// chance de critico
+			false   // dano verdadeiro
 		);
 	}
-
-
 }

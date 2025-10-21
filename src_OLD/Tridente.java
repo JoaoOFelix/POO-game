@@ -1,49 +1,64 @@
 public final class Tridente extends Arma {
+	
 	public Tridente() {
         super(
             "Tridente", 
-            "Um Tridente originado do fundo dos oceanos, que reduz a defesa dos inimigos em 50%", 
+            "Um Tridente originado do fundo dos oceanos, que reduz a defesa e o dano dos inimigos em 50%", 
             Raridade.EPICO, 
-            750.0, // preço venda
+            900.0, // preço venda
             false,  // empilhável
             1,      // quantidade
-            5.0,   // dano
+            6.0,   // dano
             2.0,    // velocidade
-            3.0,    // multiplicador crítico
-			5      // chanche de critico
+            4.0,    // multiplicador crítico
+			10,      // chanche de critico
+			false   //Dano verdadeiro
         );
 	}
 	
 	@Override
-	public void usar(Entidade entidade, Jogador jogador){	
+	public void usar(Entidade alvo, Entidade usuario){	
 	}
 	
 	@Override
-	public void usarUnico(Entidade entidade, Jogador jogador){
-		double novaDefesa;
-		double novoDano;
-		double defesa = entidade.getDefesa();
-		double dano = entidade.getDano();
+	public void usarUnico(Entidade alvo, Entidade usuario){
+		double novaDefesa = 0;
+		double novoDano = 0;
+		double defesaInimigo = alvo.getDefesa();
+		double danoInimigo = alvo.getDano();
+		double danoTotalFinal = 0;
 		
 		
-		//reduz defesa
-		if(defesa >= 2){
+		
+		if(alvo instanceof Inimigo){
+			Inimigo inimigo = (Inimigo) alvo;
 			
+			if(inimigo.hasArma()){
 			
-			novaDefesa = defesa * 0.5;
-			System.out.println("Nova defesa do inimigo: "+novaDefesa);
-			entidade.setDefesa(novaDefesa);
+				
+				double danoArma = inimigo.getArma().getDano();
+				
+				inimigo.getArma().setDano(danoArma * 0.5);
+				danoTotalFinal += inimigo.getArma().getDano();
+			}
 		}
 		
-		
-		System.out.println("coisas do dia a dia");		
+
+		//reduz defesa
+		if(defesaInimigo >= 2){
+			novaDefesa = defesaInimigo * 0.5;
+			System.out.println("Nova defesa do inimigo: " + novaDefesa);
+			alvo.setDefesa(novaDefesa);
+		}
 		
 		//reduz dano
-		if(dano >= 2){	
-			novoDano = dano * 0.5;
-			System.out.println("Novo dano do inimigo: "+novoDano);
-			entidade.setDano(novoDano);
+		if(danoInimigo >= 2){	
+			novoDano = danoInimigo * 0.5;
+			
+			alvo.setDano(novoDano);
+			danoTotalFinal += novoDano;
 		}
+			
+		System.out.println("O tridente diminuiu o dano total do inimigo. Dano total do Inimigo: " + danoTotalFinal);
 	}
-	
 }

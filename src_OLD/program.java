@@ -1,8 +1,6 @@
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
-//import javax.swing.JOptionPane;
-//import javax.swing.*;
 
 public class program {
 	
@@ -10,12 +8,9 @@ public class program {
     private Jogador jogador;
     private Inimigo goblin;
 	
-		
     public static void main(String args[]) {
-		
 		new program().iniciarJogo();
 	}
-    
   
 	private void iniciarJogo(){
 		iniciarObjetos();
@@ -25,10 +20,8 @@ public class program {
 	}
   
 	private void exibirMensagemBoasVindas() {
-		//JOptionPane.showMessageDialog(null, "Bem-vindo " + jogador.getNome() + "!");
         System.out.println("\n \n Bem-vindo " + jogador.getNome() + "!");
     }
-  
   
 	private void iniciarObjetos(){
 		System.out.print("Escreva o nome do jogador: ");
@@ -44,21 +37,21 @@ public class program {
             processarOpcao(opcao);
         } while (opcao != 0 && jogador.isAlive());
 	  
-  }
+	}
   
   
   private void exibirMenu(){
 		System.out.println("\nVida: " + jogador.getVida() + "/" + jogador.getVidaMax());
 		System.out.println("\nDinheiro: " + jogador.getDinheiro());		
 		
-		if (jogador.hasArmaEquipada()){
-			System.out.println("Arma equipada: " + jogador.getArmaEquipada().getNome());
+		if (jogador.hasArma()){
+			System.out.println("Arma equipada: " + jogador.getArma().getNome());
 		} else {
 			System.out.println("Arma equipada: Nenhuma");
 		}
 
-		if (jogador.hasArmaduraEquipada()){
-			System.out.println("Armadura equipada: " + jogador.getArmaduraEquipada().getNome());
+		if (jogador.hasArmadura()){
+			System.out.println("Armadura equipada: " + jogador.getArmadura().getNome());
 		} else {
 			System.out.println("Armadura equipada: Nenhuma");
 		}
@@ -75,6 +68,8 @@ public class program {
 		System.out.println("8. Usar cura");
 		System.out.println("9. Vender Item");
 		System.out.println("10. Loja");
+		if(jogador.getXpLevel() >= 3)
+			System.out.println("11. Forja");
         System.out.println("0. Sair");
         System.out.print("> ");
 	}
@@ -116,24 +111,32 @@ public class program {
 			break;
 		case 8:
 			this.usarCura();
-			break;
-		
+			break;	
 		case 9:
 			jogador.venderItem();
-		
 			break;
 		case 10:
 			abrirLoja();	
 			break;
-		case 11:			
+		case 11:
+			if(jogador.getXpLevel() >= 3)
+				abrirForja();
+			break;
+		case 12:			
 			//jogador.addItem(new BigBertha());
-			//jogador.addItem(new Excalibur());
-			//jogador.addItem(new EspadaVampirica());
-			jogador.addItem(new PocaoCuraPequena());
-			jogador.addItem(new PocaoCuraMedia());
-			jogador.addItem(new PocaoCuraGrande());
-			jogador.addItem(new Tridente());
+			jogador.addItem(new AdagaLadrao());
+			jogador.addItem(new PorreteOrc());
+			//jogador.addItem(new PocaoCuraPequena());
+			//jogador.addItem(new PocaoCuraMedia());
+			//jogador.addItem(new PocaoCuraGrande());
+			//jogador.addItem(new Tridente());
+			//jogador.addItem(new ArmaduraDragao());
+			jogador.setXpLevel(3);
+			//jogador.addItem(new AdagaLadrao());
 			//jogador.addItem(new ArmaduraGuerreiro());
+			break;
+		case 155:
+			jogador.ganharDinheiro(500);
 			break;
 		case 0:
 			System.out.println("Saindo do jogo...");
@@ -141,25 +144,23 @@ public class program {
 		default:
 			System.out.println("Opção inválida!");
 			break;
-	}
+		}
     }
 	
 	private void equiparArmadura(){
 		jogador.equiparArmadura();
 	}
 	
-	
-	
 	private void verInventario() {
         System.out.println("Inventário:");
-        System.out.println(jogador.inventario.verInventario());
+        System.out.println(jogador.getInventario().verInventario(jogador));
     }
 
     private void tomarDano() {
         System.out.print("Quanto de dano o jogador vai tomar? ");
         double dano = scanner.nextDouble();
         scanner.nextLine();
-        jogador.dmgPlayer(dano);
+        jogador.tomarDano(dano, jogador, jogador);
     }
 
     private void adicionarItem() {
@@ -187,7 +188,6 @@ public class program {
         new Combate(jogador);
     }
 	
-	
 	//colocar no jogador =====================================================================================
 	private void usarCura(){
 		jogador.usarCura();
@@ -196,7 +196,7 @@ public class program {
 	//JOGAR PARA O CODIGO DO JOGADOR
 	private void equiparArma() {
 		// Pega apenas as armas do inventário
-		List<Arma> armas = jogador.inventario.getTipo(Arma.class);
+		List<Arma> armas = jogador.getInventario().getTipo(Arma.class);
 
 		if (armas.isEmpty()) {
 			System.out.println("Nenhuma arma disponível no inventário.");
@@ -227,67 +227,13 @@ public class program {
 		System.out.println("Você equipou: " + escolhida.getNome());
 
 	}
-	
-	
-	
-	
+		
 	private void abrirLoja(){
-		List<Item> itensLoja = new ArrayList<>();
-		double dinheiroJogador = jogador.getDinheiro();
-		double multVenda = 1.05;
-		Item escolhaItem = null;
-
-		itensLoja.add(new EspadaVampirica());
-		itensLoja.add(new PocaoCuraMedia());
-		itensLoja.add(new Excalibur());
-		itensLoja.add(new ArmaduraGuerreiro());
-		itensLoja.add(new Tridente());
-		itensLoja.add(new PorreteOrc());
-		itensLoja.add(new AdagaLadrao());
-		
-		System.out.println("Bem vindo a loja noturna");
-		System.out.println("Dinheiro: " + dinheiroJogador);
-		System.out.println("======================");
-		
-		
-		
-		for (int i = 0; i < itensLoja.size(); i++) {
-			System.out.println(i + "- " + itensLoja.get(i).getNome() + " (" + itensLoja.get(i).getRaridade() + ") " + ": " + itensLoja.get(i).getPrecoVenda() * multVenda);
-		}
-		
-		
-		System.out.println("0- Sair");
-		
-		// Escolha do jogador
-		System.out.print(">");
-		Scanner sc = new Scanner(System.in);
-		int escolha = sc.nextInt();
-		
-		
-		
-		if (escolha >= 0 && escolha < itensLoja.size()) {
-			escolhaItem = itensLoja.get(escolha);
-		} else {
-			System.out.println("Opção inválida!");
-		}
-
-		
-		
-		
-		
-		if(escolhaItem != null){
-			
-			if(dinheiroJogador >= escolhaItem.getPrecoVenda() * multVenda){
-				jogador.addItem(escolhaItem);
-				jogador.perderDinheiro(escolhaItem.getPrecoVenda() * multVenda);
-			} else {
-				System.out.println("Dinheiro insuficiente");
-			}
-		} else {
-			System.out.println("Saindo");
-		}
-		
-		
+		new LojaNoturna(jogador);
+	}
+	
+	private void abrirForja(){
+		new Forja(jogador);
 	}
 
 }

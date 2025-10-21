@@ -8,7 +8,7 @@ public class Inventario<T extends Item>{
 	
 	public Inventario() {
         this.itens = new ArrayList<>();
-		slotsInventario = 99;
+		slotsInventario = 8;
     }
 
 	
@@ -28,6 +28,10 @@ public class Inventario<T extends Item>{
 		itens.remove(item);
 	}
 	
+	public boolean isEmpty(){
+		return itens.isEmpty();
+	}
+	
 	public void listar(){
         if (itens.isEmpty()) {
             System.out.println("Inventário vazio.");
@@ -44,7 +48,7 @@ public class Inventario<T extends Item>{
 	}
 		
 		
-	public String verInventario(){
+	public String verInventario(Jogador jogador){
 		System.out.println("Slots " +  itens.size() + "/" + slotsInventario);
 		if (itens.isEmpty()) {
 			return "Nenhum item no inventário.";
@@ -55,20 +59,27 @@ public class Inventario<T extends Item>{
 			
 			Item item = itens.get(i);
     
-			System.out.println(item.getQuantidade() + "qtd");
+			
 			sb.append(i).append(" - ");
 			if(item.isEmpilhavel())
 				sb.append(item.getQuantidade() + "x ");
-			sb.append(item.getNome() + " - " + item.getRaridade())
-			.append("\n| Descrição: ").append(item.getDescricao());
+			sb.append(item.getNome() + " - " + item.getRaridade());
+			if(item == jogador.getArma() || item == jogador.getArmadura()){
+				sb.append(" (Equipado)");
+			}
+			sb.append("\n| Descrição: ").append(item.getDescricao());
     
 			// Se for arma, mostrar dano também
 			if (item instanceof Arma) {
 				Arma arma = (Arma) item;
 				sb.append("\n| Dano: ").append(arma.getDano())
 				.append("\n| Velocidade: ").append(arma.getVelocidade())
-				.append("\n| Chance de critico: ").append(arma.getChanceCritico())
-				.append("\n| Multiplicador de dano critico: ").append(arma.getMultiplicadorCritico());
+				.append("\n| Chance de critico: ").append(Formata.formatar(arma.getChanceCritico())).append("%")
+				.append("\n| Multiplicador de dano critico: ").append(Formata.formatar(arma.getMultiplicadorCritico()));
+			} else if(item instanceof Armadura){
+				Armadura armadura = (Armadura) item;
+				sb.append("\n| Defesa: ").append(armadura.getDefesa())
+				.append("\n| Durabilidade: ").append(armadura.getDurabilidade());
 			}
     
 			sb.append("\n");
@@ -99,8 +110,8 @@ public class Inventario<T extends Item>{
 				.append(" | Descrição: ").append(arma.getDescricao())
 				.append(" | Dano: ").append(arma.getDano())
 				.append(" | Velocidade: ").append(arma.getVelocidade())
-				.append(" | Chance de critico: ").append(arma.getChanceCritico())
-				.append(" | Multiplicador de dano critico: ").append(arma.getMultiplicadorCritico())
+				.append(" | Chance de critico: ").append(Formata.formatar(arma.getChanceCritico()))
+				.append(" | Multiplicador de dano critico: ").append(Formata.formatar(arma.getMultiplicadorCritico()))
 				.append("\n");
 			}	
 		}
@@ -108,9 +119,6 @@ public class Inventario<T extends Item>{
 		return sb.toString();
 	}
 
-	
-	
-	
 	public String verArmaduras(){
 		if (itens.isEmpty()) {
 			return "Nenhum item no inventário.";
@@ -142,8 +150,6 @@ public class Inventario<T extends Item>{
 	
 	public String verPocoes() {
 		// Filtra apenas as poções
-		
-		
 		List<PocaoCura> pocoes = getTipo(PocaoCura.class);
 
 		if (pocoes.isEmpty()) {
@@ -175,7 +181,19 @@ public class Inventario<T extends Item>{
 			}
 		}
 		return lista;
-
+	}
+	
+	public List<Item> getEquipaveis(){
+		List<Item> itens = new ArrayList<>();
+		itens.addAll(getTipo(Arma.class));
+		itens.addAll(getTipo(Armadura.class));
+		
+		/*
+		for(Item item : itens){
+			System.out.println(item.getNome());
+		} */
+		
+		return itens;
 	}
 	
 	public boolean hasItem(Item item){

@@ -5,21 +5,14 @@ public final class Excalibur extends Arma{
             "Excalibur", 
             "A lendária espada dos reis", 
             Raridade.EPICO, 
-            750.0, // preço venda
+            900.0, // preço venda
             false,  // empilhável
             1,      // quantidade
-            12.0,   // dano
-            3.0,    // velocidade
+            11.0,   // dano
+            3.5,    // velocidade
             1.4,    // multiplicador crítico
-			20     // chanche de critico
+			20,     // chanche de critico
+			false   //Dano verdadeiro
         );
 	}
-	
-	@Override
-	public void usar(Entidade entidade, Jogador jogador){
-		
-		
-	}
-	
-
 }
